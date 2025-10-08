@@ -37,6 +37,9 @@ userRouter.delete("/freeze/{:userId}",Authentication(TokenType.access),validatio
 userRouter.delete("/unfreeze/:userId",Authentication(TokenType.access),validation(unfreezedSchema), US.unfreezeAccount); 
 userRouter.get("/dashboard",Authentication(TokenType.access),Authorization({accessRole:[RoleType.admin , RoleType.superAdmin]}), US.dashBoard); 
 userRouter.patch("/updaterole/:userId",Authentication(TokenType.access),Authorization({accessRole:[RoleType.admin , RoleType.superAdmin]}), US.updateRole); 
+userRouter.post("/sendrequest/:userId",Authentication(TokenType.access),US.sendFriendRequest); 
+userRouter.patch("/acceptrequest/:requestId",Authentication(TokenType.access),US.acceptRequest); 
+
 
 
 

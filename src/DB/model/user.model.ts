@@ -81,7 +81,9 @@ const userSchema = new mongoose.Schema<IUser>({
   restoredAt:{ type: Date },
   restoredBy:{ type: Types.ObjectId ,ref:"User" },
 
-  friends:{ type: Types.ObjectId ,ref:"User" },
+  // friends:{ type: Types.ObjectId ,ref:"User" },
+  // Correct line: Defines it as an array of ObjectIds
+  friends: [{ type: Types.ObjectId ,ref:"User" }],
 
 
 
