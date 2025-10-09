@@ -39,6 +39,8 @@ userRouter.get("/dashboard",Authentication(TokenType.access),Authorization({acce
 userRouter.patch("/updaterole/:userId",Authentication(TokenType.access),Authorization({accessRole:[RoleType.admin , RoleType.superAdmin]}), US.updateRole); 
 userRouter.post("/sendrequest/:userId",Authentication(TokenType.access),US.sendFriendRequest); 
 userRouter.patch("/acceptrequest/:requestId",Authentication(TokenType.access),US.acceptRequest); 
+userRouter.patch("/unfriendrequest/:requestId",Authentication(TokenType.access),US.unfriendRequest); 
+userRouter.patch("/cancelRequest/:requestId",Authentication(TokenType.access),US.cancelRequest); 
 
 
 

@@ -506,7 +506,7 @@ class UserService {
       { role: newRole },
       { new: true })
 
-      console.log(req.user?.role)
+    console.log(req.user?.role)
 
     if (!user) {
       throw new AppError("User not found to update role", 404)
@@ -516,74 +516,128 @@ class UserService {
 
   }
 
-    //* ===================== Send Friend Request =====================//
-    sendFriendRequest = async (req: Request, res: Response, next: NextFunction) => {
-      const { userId } = req.params
+  //* ===================== Send Friend Request =====================//
+  sendFriendRequest = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params
 
-      const user = await this._userModel.findOne({
-        _id: userId,
-      })  
-
-
-
-      if (!user) {
-        throw new AppError("User not found to send friend request", 404)
-      }
-
-
-      if (req.user?._id == userId) {
-        throw new AppError("You cannot send friend request to yourself", 400)
-      }
-
-
-      const checkRequest = await this._friendRequestModel.findOne({
-        createdBy: {$in : [req.user?._id, userId]},
-        sendTo: {$in : [req.user?._id, userId]},
-      })
-
-      
-      if (checkRequest) {
-        throw new AppError("You already sent a friend request to this user", 400)
-      }
+    const user = await this._userModel.findOne({
+      _id: userId,
+    })
 
 
 
-      const friendRequest = await this._friendRequestModel.create({
-        createdBy: req.user?._id as unknown as Types.ObjectId,
-        sendTo: userId as unknown as Types.ObjectId,
-      })
-  
-
-
-      return res.status(200).json({ message: "The friend request is sent successfully",friendRequest })
-  
+    if (!user) {
+      throw new AppError("User not found to send friend request", 404)
     }
 
-    //* ===================== Accept Friend Request =====================//
-    acceptRequest = async (req: Request, res: Response, next: NextFunction) => {
-      const { requestId } = req.params
 
-      const checkRequest= await this._friendRequestModel.findOneAndUpdate({
-        _id: requestId,
-        sendTo: req.user?._id,
-        acceptedAt: { $exists: false },
-      },{
-        acceptedAt: new Date(),
-      },{
-        new: true
-      })  
-
-      if (!checkRequest) {
-        throw new AppError("Request not found to accept friend request", 404)
-      }
-
-      await Promise.allSettled([
-        this._userModel.updateOne({ _id: checkRequest.createdBy }, { $push:{friends: checkRequest.sendTo} }),
-        this._userModel.updateOne({ _id: checkRequest.sendTo }, { $push:{friends: checkRequest.createdBy} }),
-      ])
-
-      return res.status(200).json({ message: "Success -acceptRequest ",checkRequest })
+    if (req.user?._id == userId) {
+      throw new AppError("You cannot send friend request to yourself", 400)
     }
+
+
+    const checkRequest = await this._friendRequestModel.findOne({
+      createdBy: { $in: [req.user?._id, userId] },
+      sendTo: { $in: [req.user?._id, userId] },
+    })
+
+
+    if (checkRequest) {
+      throw new AppError("You already sent a friend request to this user", 400)
+    }
+
+
+
+    const friendRequest = await this._friendRequestModel.create({
+      createdBy: req.user?._id as unknown as Types.ObjectId,
+      sendTo: userId as unknown as Types.ObjectId,
+    })
+
+
+
+    return res.status(200).json({ message: "The friend request is sent successfully", friendRequest })
+
+  }
+
+  //* ===================== Accept Friend Request =====================//
+  acceptRequest = async (req: Request, res: Response, next: NextFunction) => {
+    const { requestId } = req.params
+    const checkRequest = await this._friendRequestModel.findOneAndUpdate({
+      _id: requestId,
+      sendTo: req.user?._id,
+      acceptedAt: { $exists: false },
+    }, {
+      acceptedAt: new Date(),
+    }, {
+      new: true
+    })
+
+    if (!checkRequest) {
+      throw new AppError("Request not found to accept friend request", 404)
+    }
+
+    await Promise.allSettled([
+      this._userModel.updateOne({ _id: checkRequest.createdBy }, { $push: { friends: checkRequest.sendTo } }),
+      this._userModel.updateOne({ _id: checkRequest.sendTo }, { $push: { friends: checkRequest.createdBy } }),
+    ])
+
+    return res.status(200).json({ message: "Success -acceptRequest ", checkRequest })
+  }
+
+
+  //* ===================== Reject/Decline Friend Request =====================//
+
+  cancelRequest = async (req: Request, res: Response, next: NextFunction) => {
+    const { requestId } = req.params
+
+    const cancelledRequest = await this._friendRequestModel.findOne({
+      _id: requestId,
+      $or: [
+        { sendTo: req.user?._id },
+        { createdBy: req.user?._id },
+      ],
+      acceptedAt: { $exists: false },
+    })
+
+    if (!cancelledRequest) {
+      throw new AppError("Request not found to cancel, or it was already accepted/rejected", 404)
+    }
+
+    await this._friendRequestModel.deleteOne({ _id: requestId })
+
+    return res.status(200).json({
+      message: "Successfully cancelled friend request",
+      cancelledRequest
+    })
+  }
+
+
+  //* ===================== unfriend Friend Request =====================//
+  unfriendRequest = async (req: Request, res: Response, next: NextFunction) => {
+    const { requestId } = req.params
+    const checkRequest = await this._friendRequestModel.findOne({
+      _id: requestId,
+      $or: [
+        { sendTo: req.user?._id },
+        { createdBy: req.user?._id },
+      ],
+      acceptedAt: { $exists: true }, // Only check accepted requests (i.e., established friendships)
+    })
+    console.log(checkRequest)
+
+    if (!checkRequest) {
+      throw new AppError("Request not found to accept friend request", 404)
+    }
+
+    await Promise.allSettled([
+      this._userModel.updateOne({ _id: checkRequest.createdBy }, { $pull: { friends: checkRequest.sendTo } }),
+      this._userModel.updateOne({ _id: checkRequest.sendTo }, { $pull: { friends: checkRequest.createdBy } }),
+    ])
+
+    await this._friendRequestModel.deleteOne({ _id: requestId })
+
+    return res.status(200).json({ message: "Success -unfriendRequest ", checkRequest })
+  }
 
   //* ===================== next() =====================//
 
