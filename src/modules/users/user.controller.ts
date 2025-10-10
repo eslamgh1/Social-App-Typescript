@@ -2,7 +2,7 @@ import { getFile } from './../../utils/s3.config';
 import { Router } from "express";
 import US from "./user.service"
 
-import { confirmEmailSchema, forgetPasswordSchema, freezedSchema, loginWithGmailSchema, resetPasswordSchema, signInSchema, signUpSchema, unfreezedSchema } from "./user.validation";
+import { confirmEmailSchema, forgetPasswordSchema, freezedSchema, loginWithGmailSchema, requestUserIdSchema, resetPasswordSchema, sendFriendRequestSchema, signInSchema, signUpSchema, unfreezedSchema } from "./user.validation";
 import { validation } from "../../middleware/validation";
 import { Authentication } from "../../middleware/authentication";
 import { TokenType } from "../../utils/token";
@@ -37,13 +37,10 @@ userRouter.delete("/freeze/{:userId}",Authentication(TokenType.access),validatio
 userRouter.delete("/unfreeze/:userId",Authentication(TokenType.access),validation(unfreezedSchema), US.unfreezeAccount); 
 userRouter.get("/dashboard",Authentication(TokenType.access),Authorization({accessRole:[RoleType.admin , RoleType.superAdmin]}), US.dashBoard); 
 userRouter.patch("/updaterole/:userId",Authentication(TokenType.access),Authorization({accessRole:[RoleType.admin , RoleType.superAdmin]}), US.updateRole); 
-userRouter.post("/sendrequest/:userId",Authentication(TokenType.access),US.sendFriendRequest); 
-userRouter.patch("/acceptrequest/:requestId",Authentication(TokenType.access),US.acceptRequest); 
-userRouter.patch("/unfriendrequest/:requestId",Authentication(TokenType.access),US.unfriendRequest); 
-userRouter.patch("/cancelRequest/:requestId",Authentication(TokenType.access),US.cancelRequest); 
-
-
-
+userRouter.post("/sendrequest/:userId",Authentication(TokenType.access),validation(sendFriendRequestSchema),US.sendFriendRequest); 
+userRouter.patch("/acceptrequest/:requestId",Authentication(TokenType.access),validation(requestUserIdSchema),US.acceptRequest); 
+userRouter.patch("/unfriendrequest/:requestId",Authentication(TokenType.access),validation(requestUserIdSchema),US.unfriendRequest); 
+userRouter.patch("/cancelRequest/:requestId",Authentication(TokenType.access),validation(requestUserIdSchema),US.cancelRequest); 
 
 
 

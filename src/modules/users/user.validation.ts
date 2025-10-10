@@ -2,6 +2,7 @@ import { z } from 'zod'; // Correct import for zod
 import { GenderType, RoleType } from '../../DB/model/user.model';
 import tr from 'zod/v4/locales/tr.js';
 import { Types } from 'mongoose';
+import { generalRules } from '../../utils/generalRoles';
 //// works fine #1
 // export const signUpSchema = z.object({
 //   name: z.string().min(3).max(30).trim(),
@@ -22,6 +23,7 @@ export const signInSchema = {
 
   }).required()
 };
+
 export const loginWithGmailSchema = {
   body: z.strictObject({
     idToken: z.string()
@@ -94,7 +96,6 @@ export const freezedSchema = {
   })
 };
 
-
 export const unfreezedSchema = {
   params: z.strictObject({
     userId: z.string().optional(),
@@ -107,6 +108,20 @@ export const unfreezedSchema = {
 }
 
 
+export const requestUserIdSchema = {
+  params: z.strictObject({
+    requestId: generalRules.id
+  }),
+};
+
+export const sendFriendRequestSchema = {
+  params: z.strictObject({
+    userId: generalRules.id
+  }),
+};
+
+
+
 // Export the type for signUpSchema
 export type SignUpSchemaType = z.infer<typeof signUpSchema.body>;
 export type confirmEmailSchema = z.infer<typeof confirmEmailSchema.body>;
@@ -117,3 +132,5 @@ export type forgetPasswordSchemaType = z.infer<typeof forgetPasswordSchema.body>
 export type resetPasswordSchemaType = z.infer<typeof resetPasswordSchema.body>;
 export type freezedSchemaType = z.infer<typeof freezedSchema.params>;
 export type unfreezedSchemaType = z.infer<typeof freezedSchema.params>;
+export type requestUserIdSchemaType = z.infer<typeof requestUserIdSchema.params>;
+export type sendFriendRequestSchemaType = z.infer<typeof sendFriendRequestSchema.params>;

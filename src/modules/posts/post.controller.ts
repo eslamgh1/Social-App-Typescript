@@ -32,8 +32,9 @@ Authentication(),
  PS.updatePost); 
 
  postRouter.get("/getposts",Authentication(), PS.getPosts); 
- postRouter.get("/getpost/:postId",Authentication(), PS.getPostById); 
- postRouter.delete("/deletepost/:postId",Authentication(), PS.deletePost); 
+ postRouter.get("/getpost/:postId",Authentication(),validation(PV.deletePostSchema), PS.getPostById); 
+
+ postRouter.delete("/deletepost/:postId",Authentication(),validation(PV.deletePostSchema), PS.deletePost); 
  
     
 

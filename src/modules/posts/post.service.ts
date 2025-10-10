@@ -6,7 +6,7 @@ import { PostRepository } from "../../DB/repositories/post.repository";
 import { AppError } from "../../utils/classError";
 import { deleteFiles, uploadFiles } from "../../utils/s3.config";
 import { uuidv4 } from "zod";
-import { ActionEnum, likePostSchemaQueryType, likePostSchemaType, updatePostSchemaType } from "./post.validation";
+import { ActionEnum, deletePostSchemaType, getPostSchemaByIdType, likePostSchemaQueryType, likePostSchemaType, updatePostSchemaType } from "./post.validation";
 import { UpdateQuery } from "mongoose";
 
 class PostService {
@@ -183,7 +183,7 @@ class PostService {
     //^ =====================  Get post by ID =====================//
   getPostById = async (req: Request, res: Response, next: NextFunction) => {
 
-    const {postId}: likePostSchemaType = req.params as likePostSchemaType
+    const {postId}: getPostSchemaByIdType  = req.params as getPostSchemaByIdType
 
     const post = await this._postModel.findOne({
       _id: postId,
@@ -211,7 +211,7 @@ class PostService {
 
   deletePost =  async (req: Request, res: Response, next: NextFunction) => {
 
-    const {postId}: likePostSchemaType = req.params as likePostSchemaType
+    const {postId}: deletePostSchemaType = req.params as deletePostSchemaType
 
     const post = await this._postModel.findOne({
       _id: postId,

@@ -525,7 +525,6 @@ class UserService {
     })
 
 
-
     if (!user) {
       throw new AppError("User not found to send friend request", 404)
     }
@@ -615,6 +614,7 @@ class UserService {
   //* ===================== unfriend Friend Request =====================//
   unfriendRequest = async (req: Request, res: Response, next: NextFunction) => {
     const { requestId } = req.params
+    
     const checkRequest = await this._friendRequestModel.findOne({
       _id: requestId,
       $or: [

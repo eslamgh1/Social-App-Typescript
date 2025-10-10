@@ -4,7 +4,6 @@ import { allowCommentEnum, availabilityEnum } from '../../DB/model/post.model';
 import mongoose from 'mongoose';
 import { generalRules } from '../../utils/generalRoles';
 
-
 export enum ActionEnum {
   like = 'like',
   unlike = 'unlike',
@@ -51,36 +50,20 @@ export const likePostSchema = {
 
 };
 
+export const deletePostSchema = {
+  params: z.strictObject({
+    postId: generalRules.id
+  }),
 
-// need to adjust
-// export const updatePostSchema = {
-//   body: z.strictObject({
-//     content: z.string().min(1).max(10000).optional(),    // ...
-//     attachments: z
-//       .array(
-//         generalRules.file)
-//       .max(2)
-//       .optional(),
-//     assetFolderId: z.string().optional(),
+};
 
-//     allowComment: z.enum(allowCommentEnum).default(allowCommentEnum.allow).optional(),
-//     availability: z.enum(availabilityEnum).default(availabilityEnum.public).optional(),
+export const getPostSchemaById = {
+  params: z.strictObject({
+    postId: generalRules.id
+  }),
 
-//     tags: z.array(generalRules.id).refine((value) => {
-//       return new Set(value).size === value?.length;
-//     }, { message: 'Dublicated tags' })
-//       .optional(),
+};
 
-//     }).superRefine((data, ctx) => {
-//     if (!Object.values(data).length) {
-//       ctx.addIssue({
-//         code: 'custom',
-//         // path: ['content'],
-//         message: 'All fields are empty',
-//       });
-//     }
-//   }),
-// };
 
 export const updatePostSchema = {
   body: z.strictObject({
@@ -111,3 +94,5 @@ export type createPostSchemaType = z.infer<typeof createPostSchema.body>;
 export type likePostSchemaType = z.infer<typeof likePostSchema.params>;
 export type likePostSchemaQueryType = z.infer<typeof likePostSchema.query>;
 export type updatePostSchemaType = z.infer<typeof updatePostSchema.body>;
+export type deletePostSchemaType = z.infer<typeof deletePostSchema.params>;
+export type getPostSchemaByIdType = z.infer<typeof getPostSchemaById.params>;
