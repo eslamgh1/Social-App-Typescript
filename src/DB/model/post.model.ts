@@ -30,6 +30,8 @@ export interface IPost {
   restoreAt?: Date,  // Made optional to match schema
   restoreBy?: Schema.Types.ObjectId,  // Made optional to match schema
 
+  // Virtual field
+  Comments?: any[],
 }
 
 const postSchema = new mongoose.Schema<IPost>(

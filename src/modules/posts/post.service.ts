@@ -8,7 +8,6 @@ import { deleteFiles, uploadFiles } from "../../utils/s3.config";
 import { uuidv4 } from "zod";
 import { ActionEnum, likePostSchemaQueryType, likePostSchemaType, updatePostSchemaType } from "./post.validation";
 import { UpdateQuery } from "mongoose";
-import { populate } from "dotenv";
 
 class PostService {
   private _userModel = new UserRepository(userModel);
@@ -142,8 +141,8 @@ class PostService {
 
     res.status(201).json({ message: "updatePost - Success", post });
   };
-  //^ =====================  Get Post =====================//
 
+  //^ =====================  Get posts =====================//
   getPosts = async (req: Request, res: Response, next: NextFunction) => {
 
     const posts = await this._postModel.findNamed({
@@ -179,6 +178,58 @@ class PostService {
 
     // res.status(201).json({ message: "getPosts - Success",totalDocs: totalDocs, page: currentPage , numPages , "doscs": docs ,posts  });
   };
+
+
+    //^ =====================  Get post by ID =====================//
+  getPostById = async (req: Request, res: Response, next: NextFunction) => {
+
+    const {postId}: likePostSchemaType = req.params as likePostSchemaType
+
+    const post = await this._postModel.findOne({
+      _id: postId,
+      createdBy: req.user?._id,
+      paranoid: true // 
+    }
+    )
+
+    if (!post) {
+      throw new AppError("Invalid post Id or You are not authorized", 400)
+    }
+
+    let { page = 1, limit = 5 } = req.query as unknown as { page: number, limit: number }
+    const {currentPage , docs ,totalDocs,numPages} = await this._postModel.paginate({
+      filter: {
+        // availability: availabilityEnum.public
+      },query: { page, limit }
+    })
+
+    res.status(201).json({ message: "getPosts - Success", post });
+
+  };
+
+  //^ =====================  Get post by ID =====================//
+
+  deletePost =  async (req: Request, res: Response, next: NextFunction) => {
+
+    const {postId}: likePostSchemaType = req.params as likePostSchemaType
+
+    const post = await this._postModel.findOne({
+      _id: postId,
+      createdBy: req.user?._id,
+      paranoid: true // 
+    }
+    )
+
+    if (!post) {
+      throw new AppError("Invalid post Id or You are not authorized", 400)
+    }
+
+    await post.deleteOne()
+
+    res.status(201).json({ message: "deletePost - Success", post });
+
+  }
+
 
   //^ ===================== next Post =====================//
 

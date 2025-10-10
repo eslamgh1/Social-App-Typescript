@@ -12,6 +12,7 @@ import connectionDB from './DB/connection.DB';
 import userModel, { GenderType } from './DB/model/user.model';
 import { v4 as uuidv4 } from 'uuid';
 import postRouter from './modules/posts/post.controller';
+import commentRouter from './modules/comments/comment.controller';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

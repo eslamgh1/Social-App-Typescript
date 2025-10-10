@@ -110,8 +110,31 @@ class CommentService {
     res.status(201).json({ message: "create Coment or Reply - Success", comment });
   };
 
+  //^ =====================  Get Comments&replies =====================//
 
+  getCommentsAndReplies = async (req: Request, res: Response, next: NextFunction) => {
+    const { postId } = req.params;
+
+    const comments = await this._commentModel.findNamed({
+      filter:{postId: postId},
+    })
+ 
+    
+    const replies = await this._commentModel.findNamed({
+      filter:{refId: postId},
+    })
+  
+    
+    if (!comments || !replies) {
+      throw new AppError("Invalid post Id or You are not authorized", 400)
+    }
+
+
+    res.status(200).json({ message: "getCommentsAndReplies - Success",comments,replies });
+    
+  }
   //^ ===================== next()  =====================//
+
 
 }
 

@@ -11,6 +11,7 @@ import { Router } from "express";
 const postRouter: Router = Router({mergeParams:true});
 
 postRouter.use("/:postId/comments{/:commentId/reply}",commentRouter)
+postRouter.use("/:postId/getcomments",commentRouter)
 
 
 postRouter.post("/",Authentication(),
@@ -30,7 +31,9 @@ Authentication(),
  validation(PV.updatePostSchema) ,
  PS.updatePost); 
 
- postRouter.get("/getposts", PS.getPosts); 
+ postRouter.get("/getposts",Authentication(), PS.getPosts); 
+ postRouter.get("/getpost/:postId",Authentication(), PS.getPostById); 
+ postRouter.delete("/deletepost/:postId",Authentication(), PS.deletePost); 
  
     
 

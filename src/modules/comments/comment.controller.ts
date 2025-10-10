@@ -16,4 +16,7 @@ commentRouter.post("/",Authentication(),
  CS.createComment); 
 
 
+ commentRouter.get("/",Authentication(), CS.getCommentsAndReplies);
+
+
 export default commentRouter;
