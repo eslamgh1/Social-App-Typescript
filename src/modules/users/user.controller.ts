@@ -9,10 +9,12 @@ import { TokenType } from "../../utils/token";
 import { fileValidation, multerCloud, storageEnum } from "../../middleware/multer";
 import { Authorization } from '../../middleware/authorization';
 import { RoleType } from '../../DB/model/user.model';
-
+import chatRouter from '../chat/chat.controller';
 
 
 const userRouter: Router = Router();
+
+userRouter.use("/:userId/chat",chatRouter);
 
 // userRouter.post("/signup", validation({ body: signUpSchema}), US.signUp); // works fine #1
 userRouter.post("/signup", validation(signUpSchema), US.signUp); //works fine #2

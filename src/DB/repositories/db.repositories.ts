@@ -11,10 +11,15 @@ export abstract class Dbrepositories<TDocument> {
     return this.model.create(data);
   }
 
-  async findOne(filter: RootFilterQuery<TDocument>, select?: ProjectionType<TDocument>): Promise<HydratedDocument<TDocument> | null> {
+  async findOne(
+    filter: RootFilterQuery<TDocument>, 
+    select?: ProjectionType<TDocument>, 
+    options?: QueryOptions<TDocument>): Promise<HydratedDocument<TDocument> | null> {
 
-    return this.model.findOne(filter).exec();
+    return this.model.findOne(filter, select, options)
   }
+
+
 
   findOneQuery(filter: RootFilterQuery<TDocument>, select?: ProjectionType<TDocument>) {
     return this.model.findOne(filter, select);
@@ -76,7 +81,6 @@ export abstract class Dbrepositories<TDocument> {
   ): Promise<HydratedDocument<TDocument> | null> {
     return this.model.findOneAndUpdate(filter, update, options);
   }
-
 
   async deleteOne(filter: RootFilterQuery<TDocument>): Promise<DeleteResult> {
     return this.model.deleteOne(filter);

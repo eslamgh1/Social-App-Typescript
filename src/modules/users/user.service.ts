@@ -119,9 +119,13 @@ class UserService {
   }
   //* =====================get Profile=====================//
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    const user = await this._userModel.findOneQuery(
+      { _id: req.user?._id }
+    ).populate("friends");
 
+    // console.log("✅ Populated User:", user);
 
-    return res.status(200).json({ message: "Get Profile", user: req.user })
+    return res.status(200).json({ message: "Get Profile", user })
   }
 
   //* =====================logout service=====================//
@@ -323,6 +327,7 @@ class UserService {
       Key,
     })
     const stream = result.Body as NodeJS.ReadableStream;
+    res.set("cross-origin-resource-policy", "cross-origin")
     res.setHeader('Content-Type', result?.ContentType!);
     if (downLoadName) {
       res.setHeader("content-disposition", `attachment; filename="${downLoadName || path.join("/").split("/").pop()}"`);
