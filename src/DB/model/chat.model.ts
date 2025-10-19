@@ -5,8 +5,8 @@ export interface IMessage {
     content: string,
     createdBy: Types.ObjectId,
 
-    createdAt: Date,
-    updatedAt: Date,
+    createdAt?: Date,
+    updatedAt?: Date,
 }
 
 export interface IChat {

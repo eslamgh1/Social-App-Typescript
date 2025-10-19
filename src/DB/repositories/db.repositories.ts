@@ -11,12 +11,13 @@ export abstract class Dbrepositories<TDocument> {
     return this.model.create(data);
   }
 
+  // ref: 8-paginate [ Socket Folder]
   async findOne(
     filter: RootFilterQuery<TDocument>, 
-    select?: ProjectionType<TDocument>, 
+    projection?: ProjectionType<TDocument>, // projection insteaf of select?
     options?: QueryOptions<TDocument>): Promise<HydratedDocument<TDocument> | null> {
 
-    return this.model.findOne(filter, select, options)
+    return this.model.findOne(filter, projection, options)
   }
 
 

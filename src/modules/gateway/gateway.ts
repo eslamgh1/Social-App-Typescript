@@ -10,7 +10,7 @@ export const connectionSocket = new Map<string, string[]>();
 
 let io : Server | undefined = undefined
 
-
+// File Getway // All real time communication ideas
 export const initializationGateway = (httpServer: HttpServer) => {
 //============================ Socket.IO Class // initialize io Server ============================= 
 
@@ -70,8 +70,8 @@ export const initializationGateway = (httpServer: HttpServer) => {
     //localhost:3000
     io.on('connection', (socket: Socket) => {
         console.log(`client connected: ${socket.id}`);
-        console.log({ socket_user: socket.data.user })
-        console.log({ user_id: socket.data.user?._id?.toString()! })
+        // console.log({ socket_user: socket.data.user })
+        // console.log({ user_id: socket.data.user?._id?.toString()! })
 
         console.log({ connectionSocket })
 

@@ -10,7 +10,8 @@ import userRouter from './modules/users/user.controller';
 import connectionDB from './DB/connection.DB';
 import postRouter from './modules/posts/post.controller';
 import { initializationGateway } from './modules/gateway/gateway';
-
+import { GraphQLList, GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
+import { createHandler } from 'graphql-http/lib/use/express';
 
 
 const limiter = rateLimit({
@@ -29,6 +30,30 @@ const port: string | number = process.env.PORT || 5000;
 // Export httpServer for Socket.IO initialization
 export let httpServer: ReturnType<typeof app.listen>;
 
+const users = [
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@example.com",
+    password: "password123",
+    gender: "male",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    password: "password456",
+    gender: "female",
+  },
+  {
+    id: 3,
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    password: "password456",
+    gender: "female",
+  },
+];
+
 
 const bootsrap = async () => {
   // Third party Modules
@@ -36,6 +61,43 @@ const bootsrap = async () => {
   app.use(cors());
   app.use(helmet());
   app.use(limiter);
+
+  //  GraphQL
+
+  var schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'get',
+    description: 'The root query type',
+    fields: {
+      hello: {
+        type: GraphQLString,
+        resolve() {
+          return 'Hello world From Qraph';
+        },
+      },
+      users: {
+        type: new GraphQLList(GraphQLString),
+        resolve() {
+          return users;
+        },
+      },
+    },
+  }),
+});
+
+const userType = new GraphQLObjectType({
+  name: 'User',
+  description: 'User Type',
+  fields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
+    gender: { type: GraphQLString },
+  },
+});
+
+app.use('/graphql', createHandler({ schema }));
 
   // Application Routes
   app.get('/', (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +122,7 @@ const bootsrap = async () => {
     console.log(`Server is running at http://localhost:${port}`);
   })
 
+  // Socket.IO
 initializationGateway(httpServer)
 
 };

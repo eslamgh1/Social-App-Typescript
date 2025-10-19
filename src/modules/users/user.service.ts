@@ -321,7 +321,7 @@ class UserService {
     const { downLoadName } = req.query as unknown as { downLoadName: string };
 
     const Key = path.join('/');
-    console.log(Key)
+    // console.log(Key)
 
     const result = await getFile({
       Key,

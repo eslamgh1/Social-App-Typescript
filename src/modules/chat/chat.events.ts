@@ -16,12 +16,13 @@ export class ChatEvents  {
         
         })
     }
-    // sendMessage = (socket: Socket , io:Server)=>{ 
-    //     return socket.on("sendMessage", (data) => {
-    //     this._chatService.sendMessage(data,socket,io)
+    sendMessage = (socket: Socket , io:Server)=>{ 
+        return socket.on("sendMessage", (data) => {
+        this._chatService.sendMessage(data,socket,io)
         
-    //     })
-    // }
+        })
+    }
+ 
 
         
 }
