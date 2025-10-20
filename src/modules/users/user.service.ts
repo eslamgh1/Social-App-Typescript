@@ -22,6 +22,8 @@ import postModel from '../../DB/model/post.model';
 import { PostRepository } from '../../DB/repositories/post.repository';
 import friendRequestModel from '../../DB/model/friendRequest.model';
 import { friendRequestRepository } from '../../DB/repositories/friendRequest.repository';
+import { ChatRepository } from '../../DB/repositories/chat.repository';
+import chatModel from '../../DB/model/chat.model';
 
 const writePipeline = promisify(pipeline);
 
@@ -30,6 +32,7 @@ class UserService {
   private _postModel = new PostRepository(postModel)
   private _friendRequestModel = new friendRequestRepository(friendRequestModel)
   private _revokeToken = new RevokeTokenRepository(RevokeTokenModel)
+  private _chatModel = new ChatRepository(chatModel)
 
 
   constructor() { }
@@ -125,7 +128,13 @@ class UserService {
 
     // console.log("✅ Populated User:", user);
 
-    return res.status(200).json({ message: "Get Profile", user })
+    const groups = await this._chatModel.find({
+      participants: {$in: [req.user?._id]},
+      group: { $exists: true }
+    })
+
+
+    return res.status(200).json({ message: "Get Profile", user ,groups })
   }
 
   //* =====================logout service=====================//

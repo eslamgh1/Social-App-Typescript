@@ -12,6 +12,7 @@ import postRouter from './modules/posts/post.controller';
 import { initializationGateway } from './modules/gateway/gateway';
 import { GraphQLList, GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
 import { createHandler } from 'graphql-http/lib/use/express';
+import chatRouter from './modules/chat/chat.controller';
 
 
 const limiter = rateLimit({
@@ -106,6 +107,7 @@ app.use('/graphql', createHandler({ schema }));
   );
   app.use("/users", userRouter);
   app.use("/posts", postRouter);
+  app.use("/chat", chatRouter);
 
   await connectionDB();
 

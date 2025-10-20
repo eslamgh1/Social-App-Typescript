@@ -22,7 +22,13 @@ export class ChatEvents  {
         
         })
     }
- 
+
+    join_room = (socket: Socket , io:Server)=>{ 
+        return socket.on("join_room", (data) => {
+        this._chatService.join_room(data,socket,io)
+    
+        })
+    }
 
         
 }
