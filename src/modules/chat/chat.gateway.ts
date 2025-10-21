@@ -15,6 +15,7 @@ export class ChatGateway {
         this._chatEvents.sayHi(socket,io)
         this._chatEvents.sendMessage(socket,io)
         this._chatEvents.join_room(socket,io)
+        this._chatEvents.sendGroupMessage(socket,io)
     
     }
 }

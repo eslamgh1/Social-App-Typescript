@@ -29,6 +29,12 @@ export class ChatEvents  {
     
         })
     }
+    sendGroupMessage = (socket: Socket , io:Server)=>{ 
+        socket.on("sendGroupMessage", (data) => {
+        this._chatService.sendGroupMessage(data,socket,io)
+    
+        })
+    }
 
         
 }

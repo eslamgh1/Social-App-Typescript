@@ -10,8 +10,11 @@ const CS = new ChatService();
 
 
 chatRouter.get("/",Authentication(),CS.getChat)
+chatRouter.get("/group/:roomId",Authentication(),CS.getGroupChat)
+
 
 chatRouter.post("/group",Authentication(), multerCloud({fileTypes: fileValidation.image} ).single("attachment"),CS.createGroupChat)
+
 
 
 export default chatRouter;
